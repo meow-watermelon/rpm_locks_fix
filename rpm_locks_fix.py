@@ -70,7 +70,7 @@ if __name__ == '__main__':
     procedure 0: test rpm db
     '''
     try:
-        rpm_run_cmd = subprocess.run(args=['rpm', '-qa'], stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, encoding='utf-8', timeout=60)
+        rpm_run_cmd = subprocess.run(args=['rpm', '-qa'], stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, encoding='utf-8', timeout=120)
     except subprocess.TimeoutExpired:
         '''
         procedure 1: fix rpm runtime locks. 
