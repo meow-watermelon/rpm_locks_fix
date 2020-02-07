@@ -56,7 +56,7 @@ if __name__ == '__main__':
     '''
     only run by root
     '''
-    if os.getuid != 0:
+    if os.getuid() != 0:
         print('THIS TOOL MUST RUN BY ROOT USER')
         sys.exit(1)
 
