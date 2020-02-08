@@ -35,23 +35,20 @@ def get_db_lock_holder_pid(db_path):
     return pids
 
 def test_lock_holder_pid_exist(pid_list):
-    count = 0
+    active_pids = []
+    stale_pid_count = 0
+    lock_holder_stat = [stale_pid_count, active_pids]
 
     for p in pid_list:
         try:
             os.kill(p, 0)
         except ProcessLookupError:
-            count += 1
+            stale_pid_count += 1
         else:
-            '''
-            placeholder
-            '''
+            active_pids.append(p)
 
-    if len(pid_list) == count:
-        return count
-    else:
-        return None
-    
+    return lock_holder_stat
+
 if __name__ == '__main__':
     '''
     only run by root
@@ -100,9 +97,9 @@ if __name__ == '__main__':
             rpm_db_lock_holder_pids = get_db_lock_holder_pid(rpm_db_home)
         
             if rpm_db_lock_holder_pids:
-                rpm_db_stale_pids = test_lock_holder_pid_exist(rpm_db_lock_holder_pids)
-                if rpm_db_stale_pids:
-                    print('RPM DB STALE LOCK: %d stale lock holder(s) found' %(rpm_db_stale_pids))
+                rpm_db_lock_holder_stat = test_lock_holder_pid_exist(rpm_db_lock_holder_pids)
+                if not rpm_db_lock_holder_stat[1]:
+                    print('RPM DB STALE LOCK: %d stale lock holder(s) found' %(rpm_db_lock_holder_stat[0]))
         
                     rpm_db_lock_files = glob.glob(rpm_db_home+'/'+'__db.*')
                     for l in rpm_db_lock_files:
@@ -112,6 +109,7 @@ if __name__ == '__main__':
                     print('RPM DB STALE LOCK: rpm db lock file(s) deleted')
                 else:
                     print('RPM DB STALE LOCK: active process(es) still attach(es) the db lock(s), skip this procedure...')
+                    print('RPM DB STALE LOCK: active process(es): ', rpm_db_lock_holder_stat[1])
             else:
                 print('RPM DB STALE LOCK: no stale lock holder(s) found, skip this procedure...')
         else:
