@@ -37,7 +37,6 @@ def get_db_lock_holder_pid(db_path):
 def test_lock_holder_pid_exist(pid_list):
     active_pids = []
     stale_pid_count = 0
-    lock_holder_stat = [stale_pid_count, active_pids]
 
     for p in pid_list:
         try:
@@ -46,6 +45,8 @@ def test_lock_holder_pid_exist(pid_list):
             stale_pid_count += 1
         else:
             active_pids.append(p)
+
+    lock_holder_stat = [stale_pid_count, active_pids]
 
     return lock_holder_stat
 
